@@ -2135,7 +2135,7 @@ spec:
                 "$__all"
               ]
             },
-            "datasource": "$datasource",
+            "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"},
             "definition": "label_values(DCGM_FI_DEV_GPU_TEMP,instance)",
             "includeAll": true,
             "multi": true,
@@ -2156,7 +2156,7 @@ spec:
                 "$__all"
               ]
             },
-            "datasource": "$datasource",
+            "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"},
             "definition": "label_values(DCGM_FI_DEV_GPU_TEMP,gpu)",
             "includeAll": true,
             "multi": true,
