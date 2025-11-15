@@ -2135,7 +2135,10 @@ spec:
                 "$__all"
               ]
             },
-            "datasource": "$datasource",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${DS_PROMETHEUS}"
+            },
             "definition": "label_values(gpu_junction_temperature,instance)",
             "includeAll": true,
             "multi": true,
@@ -2156,7 +2159,10 @@ spec:
                 "$__all"
               ]
             },
-            "datasource": "$datasource",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${DS_PROMETHEUS}"
+            },
             "definition": "label_values(gpu_junction_temperature,gpu)",
             "includeAll": true,
             "multi": true,

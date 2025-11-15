@@ -2135,7 +2135,10 @@ spec:
                 "$__all"
               ]
             },
-            "datasource": "$datasource",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${DS_PROMETHEUS}"
+            },
             "definition": "label_values(habanalabs_temperature_onchip,instance)",
             "includeAll": true,
             "multi": true,
@@ -2156,7 +2159,10 @@ spec:
                 "$__all"
               ]
             },
-            "datasource": "$datasource",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "${DS_PROMETHEUS}"
+            },
             "definition": "label_values(habanalabs_temperature_onchip,gpu)",
             "includeAll": true,
             "multi": true,
