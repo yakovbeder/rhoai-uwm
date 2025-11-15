@@ -2109,14 +2109,21 @@ spec:
         "list": [
           {
             "current": {
+              "selected": false,
               "text": "Prometheus",
-              "uid": "${DS_PROMETHEUS}"
+              "value": "${DS_PROMETHEUS}"
             },
-            "name": "datasource",
+            "hide": 0,
+            "includeAll": false,
+            "label": "datasource",
+            "multi": false,
+            "name": "DS_PROMETHEUS",
             "options": [],
             "query": "prometheus",
+            "queryValue": "",
             "refresh": 1,
             "regex": "",
+            "skipUrlSync": false,
             "type": "datasource"
           },
           {
