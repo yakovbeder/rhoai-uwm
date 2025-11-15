@@ -4,16 +4,17 @@ Enable RHOAI User Workload Metrics for Single Serving Models
 
 ## Prerequisites
 
-- OpenShift 4.10 or later
-- OpenShift AI 2.10+ installed
+- OpenShift 4.15 or later
+- Red Hat OpenShift AI 2.22+ installed
 - OpenShift AI KServe installed and configured
 - NVIDIA GPU Operator installed and configured
 
 ## Installation
 
-* [Configure Monitoring for the Single Model Serving Platform](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/2.11/html/serving_models/serving-large-models_serving-large-models#configuring-monitoring-for-the-single-model-serving-platform_serving-large-models)
-* [Configure GPU Monitoring Dashboard](https://docs.nvidia.com/datacenter/cloud-native/openshift/23.9.2/enable-gpu-monitoring-dashboard.html)
-* [Install the RHOAI Metrics Grafana and Dashboards for Single Serving Models](./rhoai-uwm-grafana/README.md)
+* [Configure Monitoring for the Single Model Serving Platform](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.0/html/managing_and_monitoring_models/managing_and_monitoring_models_on_the_single_model_serving_platform#configuring-monitoring-for-the-single-model-serving-platform_cluster-admin)
+* [Configure GPU Monitoring Dashboard](https://docs.nvidia.com/datacenter/cloud-native/openshift/24.9.2/enable-gpu-monitoring-dashboard.html)
+* [Install the RHOAI Metrics Grafana and Dashboards for Single Serving Models with Kustomize](./rhoai-uwm-grafana-kustomize/README.md)
+* [Install the RHOAI Metrics Grafana and Dashboards for Single Serving Models with GitOps](./rhoai-uwm-grafana-gitops/README.md)
 
 ## Usage
 
