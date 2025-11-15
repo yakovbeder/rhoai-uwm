@@ -11,6 +11,10 @@ resources:
   - grafana-folder.yaml
   - grafana-vllm-dashboard.yaml
   - grafana-ovms-dashboard.yaml
+  - grafana-ovms-community-dashboard.yaml
+  - nvidia-vllm-dashboard.yaml
+  - amd-vllm-dashboard.yaml
+  - gaudi-vllm-dashboard.yaml
 
 patches:
   - patch: |-
