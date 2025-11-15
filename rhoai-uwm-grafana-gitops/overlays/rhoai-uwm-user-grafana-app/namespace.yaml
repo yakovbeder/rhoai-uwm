@@ -5,3 +5,4 @@ metadata:
     openshift.io/description: Project for deploying Grafana for User Application Monitoring in RHOAI
     openshift.io/display-name: RHOAI Grafana User App Monitoring
   name: user-grafana
+
