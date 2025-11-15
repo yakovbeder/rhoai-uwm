@@ -1,18 +1,22 @@
----
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 namespace: user-grafana
 
 resources:
-  - ../grafana-uwm-user-app
-  - namespace.yaml
-  - operator-group.yaml
+  - ../../../base/instance
   - grafana-folder.yaml
-  - grafana-vllm-dashboard.yaml
-  - grafana-ovms-dashboard.yaml
+  - grafana-ds.yaml
 
 patches:
+  - patch: |-
+      - op: add
+        path: /subjects/0/namespace
+        value: user-grafana
+    target:
+      group: rbac.authorization.k8s.io
+      kind: RoleBinding
+      name: grafana-proxy
   - patch: |-
       - op: add
         path: /subjects/0/namespace
@@ -26,14 +30,6 @@ patches:
       name: cluster-monitoring-view
   - patch: |-
       - op: add
-        path: /subjects/0/namespace
-        value: user-grafana
-    target:
-      group: rbac.authorization.k8s.io
-      kind: RoleBinding
-      name: grafana-proxy
-  - patch: |-
-      - op: add
         path: /spec/config/users
         value:
           auto_assign_org: 'true'
@@ -43,3 +39,16 @@ patches:
       group: grafana.integreatly.org
       version: v1beta1
       kind: Grafana
+  - patch: |-
+      - op: add
+        path: /spec/valuesFrom
+        value:
+          - targetPath: "secureJsonData.httpHeaderValue1"
+            valueFrom:
+              secretKeyRef:
+                name: grafana-auth-secret
+                key: token
+    target:
+      kind: GrafanaDatasource
+      name: prometheus-grafanadatasource
+
