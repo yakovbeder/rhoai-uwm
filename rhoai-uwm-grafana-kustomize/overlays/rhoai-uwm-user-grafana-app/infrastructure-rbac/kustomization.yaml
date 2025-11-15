@@ -6,7 +6,6 @@ namespace: user-grafana
 resources:
   - namespace.yaml
   - operator-group.yaml
-  - ../../../base/operator
   - grafana-proxy-rbac.yaml
   - cluster-monitor-view-rb.yaml
 

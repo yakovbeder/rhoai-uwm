@@ -6,31 +6,31 @@ This repository contains Kustomize overlays for deploying Grafana for RHOAI User
 
 - OpenShift cluster with cluster-admin access
 - `oc` CLI tool installed and configured
-- Grafana Operator will be installed as part of the deployment
+- Grafana Operator installed cluster-wide (not included in this deployment)
 
 ## Quick Start
 
 Deploy in 3 phases to avoid race conditions:
 
 ```bash
-# Phase 1: Infrastructure & Operator
-oc apply -k overlays/rhoai-uwm-user-grafana-app/phase1/
+# Phase 1: Infrastructure & RBAC
+oc apply -k overlays/rhoai-uwm-user-grafana-app/infrastructure-rbac/
 # Wait for CRDs: oc get crd | grep grafana.integreatly.org
 
 # Phase 2: Grafana Instance & Core Resources
-oc apply -k overlays/rhoai-uwm-user-grafana-app/phase2/
+oc apply -k overlays/rhoai-uwm-user-grafana-app/grafana-instance/
 # Wait for service account: oc get serviceaccount grafana-sa -n user-grafana
 
 # Phase 3: Auth Secret & Dashboards
-oc apply -k overlays/rhoai-uwm-user-grafana-app/phase3/
+oc apply -k overlays/rhoai-uwm-user-grafana-app/dashboards/
 # Wait for token: oc get secret grafana-auth-secret -n user-grafana
 ```
 
 ## What Gets Deployed
 
-- **Phase 1**: Namespace, OperatorGroup, Grafana Operator subscription, RBAC
-- **Phase 2**: Grafana instance, datasource, folder, configmaps, secrets
-- **Phase 3**: Authentication secret, 6 dashboards (vLLM, OVMS, GPU metrics)
+- **Infrastructure & RBAC**: Namespace, OperatorGroup, RBAC (ClusterRole, RoleBinding, ClusterRoleBinding)
+- **Grafana Instance**: Grafana instance, datasource, folder, configmaps, secrets
+- **Dashboards**: Authentication secret, 6 dashboards (vLLM, OVMS, GPU metrics)
 
 ## Access Grafana
 
@@ -41,35 +41,34 @@ oc get route grafana-route -n user-grafana
 ## Cleanup
 
 ```bash
-oc delete -k overlays/rhoai-uwm-user-grafana-app/phase3/
-oc delete -k overlays/rhoai-uwm-user-grafana-app/phase2/
-oc delete -k overlays/rhoai-uwm-user-grafana-app/phase1/
+oc delete -k overlays/rhoai-uwm-user-grafana-app/dashboards/
+oc delete -k overlays/rhoai-uwm-user-grafana-app/grafana-instance/
+oc delete -k overlays/rhoai-uwm-user-grafana-app/infrastructure-rbac/
 ```
 
 ## Why Phased Deployment?
 
 The phased approach prevents race conditions:
-- CRDs must exist before Grafana CRs
+- CRDs must exist before Grafana CRs (provided by cluster-wide Grafana Operator)
 - Service account must exist before auth secret
 - Wait steps ensure proper resource ordering
 
 ## Detailed Phase Information
 
-### Phase 1: Infrastructure & Operator
+### Infrastructure & RBAC
 
 **What it deploys**:
 - Namespace `user-grafana`
-- OperatorGroup
-- Grafana operator subscription
+- OperatorGroup (tells cluster-wide Grafana operator to manage this namespace)
 - RBAC (ClusterRole, RoleBinding, ClusterRoleBinding)
 
-**Wait for CRDs**:
+**Wait for CRDs** (from cluster-wide Grafana Operator):
 ```bash
 oc get crd | grep grafana.integreatly.org
 # Should see: grafanas, grafanadatasources, grafanadashboards, grafanafolders
 ```
 
-### Phase 2: Grafana Instance & Core Resources
+### Grafana Instance
 
 **What it deploys**:
 - Grafana instance (CR)
@@ -82,7 +81,7 @@ oc get crd | grep grafana.integreatly.org
 oc get serviceaccount grafana-sa -n user-grafana
 ```
 
-### Phase 3: Auth Secret & Dashboards
+### Dashboards
 
 **What it deploys**:
 - `grafana-auth-secret` (service account token)
