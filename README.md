@@ -12,7 +12,7 @@ Enable RHOAI User Workload Metrics for Single Serving Models
 ## Installation
 
 * [Configure Monitoring for the Single Model Serving Platform](https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.0/html/managing_and_monitoring_models/managing_and_monitoring_models_on_the_single_model_serving_platform#configuring-monitoring-for-the-single-model-serving-platform_cluster-admin)
-* [Configure GPU Monitoring Dashboard](https://docs.nvidia.com/datacenter/cloud-native/openshift/24.9.2/enable-gpu-monitoring-dashboard.html)
+* [Configure GPU Monitoring Dashboard](https://docs.nvidia.com/datacenter/cloud-native/openshift/latest/enable-gpu-monitoring-dashboard.html)
 * [Install the RHOAI Metrics Grafana and Dashboards for Single Serving Models with Kustomize](./rhoai-uwm-grafana-kustomize/README.md)
 * [Install the RHOAI Metrics Grafana and Dashboards for Single Serving Models with GitOps](./rhoai-uwm-grafana-gitops/README.md)
 
