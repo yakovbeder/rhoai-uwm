@@ -2199,7 +2199,7 @@ spec:
       "timepicker": {},
       "timezone": "",
       "title": "vLLM / GPU Metrics - AMD",
-      "uid": "aec6hbnje0zy8a",
+      "uid": "amd-gpu-vllm-metrics",
       "version": 1,
       "weekStart": ""
     }
