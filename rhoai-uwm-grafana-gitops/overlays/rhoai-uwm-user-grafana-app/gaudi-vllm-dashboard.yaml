@@ -50,7 +50,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "GPU Current Temperature",
           "fieldConfig": {
@@ -137,7 +137,7 @@ spec:
           "targets": [
             {
               "datasource": {
-                "uid": "$datasource"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "habanalabs_temperature_onchip{instance=~\"$instance\", gpu=~\"$gpu\"}",
@@ -153,7 +153,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "Average GPU temerature",
           "fieldConfig": {
@@ -212,7 +212,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "avg(habanalabs_temperature_onchip{instance=~\"$instance\", gpu=~\"$gpu\"})",
@@ -228,7 +228,7 @@ spec:
         },
         {
           "datasource": {
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "Key Metrics to Visualize:\n    - GPU Temperature: Monitor the GPU temperature. Throttling often occurs when the GPU reaches a certain temperature (e.g., 85-90°C)2.\n    - SM Clock Speed: Observe the core clock speed. A significant drop in the clock speed while the GPU is under load indicates throttling.",
           "fieldConfig": {
@@ -317,7 +317,7 @@ spec:
           "targets": [
             {
               "datasource": {
-                "uid": "$datasource"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "exemplar": false,
@@ -337,7 +337,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "GPU Current Power Usage",
           "fieldConfig": {
@@ -424,7 +424,7 @@ spec:
           "targets": [
             {
               "datasource": {
-                "uid": "$datasource"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "habanalabs_power_mW{instance=~\"$instance\", gpu=~\"$gpu\"}",
@@ -440,7 +440,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "GPU Total Power - The SUM of the power read from all sensors",
           "fieldConfig": {
@@ -505,7 +505,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "sum(habanalabs_power_mW{instance=~\"$instance\", gpu=~\"$gpu\"})",
@@ -521,7 +521,7 @@ spec:
         },
         {
           "datasource": {
-            "uid": "$datasource"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "Current GPU Utilization",
           "fieldConfig": {
@@ -610,7 +610,7 @@ spec:
           "targets": [
             {
               "datasource": {
-                "uid": "$datasource"
+                "uid": "${DS_PROMETHEUS}"
               },
               "expr": "habanalabs_utilization{instance=~\"$instance\", gpu=~\"$gpu\"}",
               "interval": "",
@@ -624,7 +624,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "If CPU throttling is low and GPU utilization is high, it indicates that the system is well-balanced, with the GPU being fully utilized without CPU constraints. \n  If CPU throttling is high and GPU utilization is low, it indicates a CPU bottleneck. The CPU is unable to keep up with the GPU's processing demands, causing the GPU to remain underutilized. If both metrics are high, it may indicate that the workload is demanding for both CPU and GPU, and you may need to scale up resources.",
           "fieldConfig": {
@@ -715,7 +715,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "sum(rate(container_cpu_cfs_throttled_seconds_total{namespace=\"$namespace\", pod=~\"$model_name.*\"}[5m])) by (namespace)",
@@ -729,7 +729,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "avg(habanalabs_utilization{instance=~\"$instance\", gpu=~\"$gpu\"})",
@@ -759,7 +759,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "Tracks the percentage of GPU memory used by the vLLM model, providing insights into memory efficiency",
           "fieldConfig": {
@@ -842,7 +842,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "vllm:gpu_cache_usage_perc{namespace=\"$namespace\", pod=~\"$model_name.*\", model_name=\"$model_name\"}",
@@ -854,7 +854,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "vllm:cpu_cache_usage_perc{namespace=\"$namespace\", pod=~\"$model_name.*\", model_name=\"$model_name\"}",
@@ -871,7 +871,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "Tracks the percentage of GPU memory used by the vLLM model, providing insights into memory efficiency.\n\n24 Hours sum over time.",
           "fieldConfig": {
@@ -955,7 +955,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "sum_over_time(vllm:gpu_cache_usage_perc{namespace=\"${namespace}\",pod=~\"$model_name.*\"}[24h])",
@@ -967,7 +967,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "sum_over_time(vllm:cpu_cache_usage_perc{namespace=\"${namespace}\",pod=~\"$model_name.*\"}[24h])",
@@ -984,7 +984,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "Measures the overall time to process a request, critical for user experience.\n\nThis is a `histogram_quantile(0.99, ...)`\n\nIt computes the 99th percentile (P99) latency from the histogram buckets.\n\nThis means 99% of requests had a latency less than or equal to the returned value.\n\nThe same goes for the other buckets",
           "fieldConfig": {
@@ -1067,7 +1067,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "builder",
@@ -1083,7 +1083,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "builder",
@@ -1100,7 +1100,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "builder",
@@ -1117,7 +1117,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "builder",
@@ -1134,7 +1134,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "rate(vllm:e2e_request_latency_seconds_sum{namespace=\"$namespace\", pod=~\"$model_name.*\", model_name=\"$model_name\"}[$__rate_interval])\n/\nrate(vllm:e2e_request_latency_seconds_count{namespace=\"$namespace\", pod=~\"$model_name.*\", model_name=\"$model_name\"}[$__rate_interval])",
@@ -1151,7 +1151,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "Running Requests: The number of requests actively being processed; helps monitor workload concurrency.\n\nX \n\nWaiting Requests: Tracks requests in the queue, indicating system saturation.\n",
           "fieldConfig": {
@@ -1234,7 +1234,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "vllm:num_requests_running{namespace='${namespace}',  pod=~\"$model_name.*\"}",
@@ -1247,7 +1247,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "vllm:num_requests_waiting{namespace='${namespace}',  pod=~\"$model_name.*\"}",
@@ -1264,7 +1264,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "The time taken to generate the first token in a response.\n\nThis is a `histogram_quantile(0.99, ...)`\n\nIt computes the 99th percentile (P99) latency from the histogram buckets.\n\nThis means 99% of requests had a latency less than or equal to the returned value.\n\nThe same goes for the other buckets",
           "fieldConfig": {
@@ -1347,7 +1347,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "builder",
@@ -1364,7 +1364,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "builder",
@@ -1380,7 +1380,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "builder",
@@ -1397,7 +1397,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "builder",
@@ -1414,7 +1414,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "rate(vllm:time_to_first_token_seconds_sum{namespace=\"$namespace\", pod=~\"$model_name.*\", model_name=\"$model_name\"}[$__rate_interval])\n/\nrate(vllm:time_to_first_token_seconds_count{namespace=\"$namespace\", pod=~\"$model_name.*\", model_name=\"$model_name\"}[$__rate_interval])",
@@ -1431,7 +1431,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "The average time taken to generate each output token.\n\nhistogram_quantile(0.99, ...):\n\nComputes the 99th percentile (P99) latency from the histogram buckets.\n\nThis means 99% of requests had a latency less than or equal to the returned value.\n\nand so on..",
           "fieldConfig": {
@@ -1514,7 +1514,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "builder",
@@ -1530,7 +1530,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "builder",
@@ -1547,7 +1547,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "builder",
@@ -1564,7 +1564,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "builder",
@@ -1581,7 +1581,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "rate(vllm:time_per_output_token_seconds_sum{namespace=\"$namespace\", pod=~\"$model_name.*\", model_name=\"$model_name\"}[5m])\n/\nrate(vllm:time_per_output_token_seconds_count{namespace=\"$namespace\", pod=~\"$model_name.*\", model_name=\"$model_name\"}[5m])",
@@ -1598,7 +1598,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "Total Requests and the end reason, that can be:\n\nLength: The request ended because it reached the maximum token limit set for the model inference.\n\nStop: The request is completed naturally based on the model's output or a stop condition (e.g., end of a sentence or token completion).",
           "fieldConfig": {
@@ -1679,7 +1679,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "vllm:request_success_total{finished_reason=\"length\",namespace=\"$namespace\", pod=~\"$model_name.*\", model_name=\"$model_name\"}",
@@ -1692,7 +1692,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "vllm:request_success_total{finished_reason=\"stop\",namespace=\"$namespace\", pod=~\"$model_name.*\", model_name=\"$model_name\"}",
@@ -1709,7 +1709,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "Number of tokens processed per second. Tracks the speed of processing prompt tokens, which is essential for LLM optimization.",
           "fieldConfig": {
@@ -1791,7 +1791,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "builder",
@@ -1807,7 +1807,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "builder",
@@ -1828,7 +1828,7 @@ spec:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "Total of generated tokens of the given period range",
           "fieldConfig": {
@@ -1879,7 +1879,7 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "${datasource}"
+                "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
               "expr": "sum(vllm:generation_tokens_total{namespace=\"$namespace\", pod=~\"$model_name.*\", model_name=\"$model_name\"})",
@@ -1898,7 +1898,7 @@ spec:
           "datasource": {
             "default": false,
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "Indicates potential system overload or scheduling inefficiencies.\nUsually empty, depending on the load.\n\nNot currently available in the vLLM Runtime version used by RHOAI",
           "fieldConfig": {
@@ -2001,7 +2001,7 @@ spec:
           "datasource": {
             "default": false,
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "${DS_PROMETHEUS}"
           },
           "description": "Tracks the time spent in model inference, offering insights into processing efficiency.\nUsually empty, depending on the load.\n\nNot currently available in the vLLM Runtime version used by RHOAI",
           "fieldConfig": {
@@ -2110,7 +2110,7 @@ spec:
           {
             "current": {
               "text": "Prometheus",
-              "uid": "${datasource}"
+              "uid": "${DS_PROMETHEUS}"
             },
             "name": "datasource",
             "options": [],
