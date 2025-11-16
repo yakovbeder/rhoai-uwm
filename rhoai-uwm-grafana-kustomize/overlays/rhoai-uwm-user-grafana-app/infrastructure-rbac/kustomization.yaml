@@ -8,6 +8,7 @@ resources:
   - operator-group.yaml
   - grafana-proxy-rbac.yaml
   - cluster-monitor-view-rb.yaml
+  - auth-delegator-binding.yaml
 
 patches:
   - patch: |-

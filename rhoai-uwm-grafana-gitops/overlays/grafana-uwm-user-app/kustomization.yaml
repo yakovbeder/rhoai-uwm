@@ -9,6 +9,7 @@ resources:
   - ../../base/instance
   - grafana-ds.yaml
   - cluster-monitor-view-rb.yaml
+  - auth-delegator-binding.yaml
   - grafana-auth-secret.yaml
 
 patches:
