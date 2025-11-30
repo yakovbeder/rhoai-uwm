@@ -8,6 +8,26 @@ This repository contains Kustomize overlays for deploying Grafana for RHOAI User
 - `oc` CLI tool installed and configured
 - Grafana Operator installed cluster-wide (not included in this deployment)
 
+## Customize Namespace
+
+**Before deploying, customize the namespace** if you don't want to use the default `user-grafana` namespace:
+
+```bash
+# Run the namespace change script with your desired namespace
+./change-namespace.sh <your-namespace>
+
+# Example: Change to namespace 'yakov'
+./change-namespace.sh yakov
+```
+
+This script will automatically update all namespace references in:
+- Infrastructure & RBAC configurations
+- Grafana instance configurations
+- Dashboard configurations
+- README.md documentation
+
+**Note:** The default namespace is `user-grafana`. If you want to use a different namespace, run the script before proceeding with deployment.
+
 ## Quick Start
 
 Deploy in 3 phases to avoid race conditions:
