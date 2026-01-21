@@ -6,17 +6,10 @@ namespace: user-grafana
 
 resources:
   - ../grafana-uwm-user-app
-  - namespace.yaml
-  - operator-group.yaml
-  - grafana-folder.yaml
-  - grafana-vllm-dashboard.yaml
-  - grafana-ovms-dashboard.yaml
-  - grafana-ovms-community-dashboard.yaml
-  - nvidia-vllm-dashboard.yaml
-  - amd-vllm-dashboard.yaml
-  - gaudi-vllm-dashboard.yaml
+  - ../../../common/base/dashboards
 
 patches:
+  # Patch ClusterRoleBinding for cluster-monitoring-view
   - patch: |-
       - op: add
         path: /subjects/0/namespace
@@ -28,6 +21,7 @@ patches:
       group: rbac.authorization.k8s.io
       kind: ClusterRoleBinding
       name: cluster-monitoring-view
+  # Patch RoleBinding for grafana-proxy
   - patch: |-
       - op: add
         path: /subjects/0/namespace
@@ -36,6 +30,7 @@ patches:
       group: rbac.authorization.k8s.io
       kind: RoleBinding
       name: grafana-proxy
+  # Patch Grafana config for auto-assign org
   - patch: |-
       - op: add
         path: /spec/config/users
@@ -47,3 +42,15 @@ patches:
       group: grafana.integreatly.org
       version: v1beta1
       kind: Grafana
+      name: grafana
+  # Add ArgoCD annotations to dashboards
+  - patch: |-
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1compare-options
+        value: IgnoreExtraneous
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1sync-options
+        value: SkipDryRunOnMissingResource=true
+    target:
+      group: grafana.integreatly.org
+      kind: GrafanaDashboard

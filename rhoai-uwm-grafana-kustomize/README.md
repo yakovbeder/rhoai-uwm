@@ -21,12 +21,13 @@ This repository contains Kustomize overlays for deploying Grafana for RHOAI User
 ```
 
 This script will automatically update all namespace references in:
-- Infrastructure & RBAC configurations
-- Grafana instance configurations
-- Dashboard configurations
+- Common base configurations
+- Overlay configurations
 - README.md documentation
 
 **Note:** The default namespace is `user-grafana`. If you want to use a different namespace, run the script before proceeding with deployment.
+
+**Note:** The script is cross-platform compatible (works on both macOS and Linux).
 
 ## Quick Start
 
@@ -48,9 +49,23 @@ oc apply -k overlays/rhoai-uwm-user-grafana-app/dashboards/
 
 ## What Gets Deployed
 
-- **Infrastructure & RBAC**: Namespace, OperatorGroup, RBAC (ClusterRole, RoleBinding, ClusterRoleBinding)
-- **Grafana Instance**: Grafana instance, datasource, folder, configmaps, secrets
-- **Dashboards**: Authentication secret, 6 dashboards (vLLM, OVMS, GPU metrics)
+- **Phase 1 - Infrastructure & RBAC** (5 resources):
+  - Namespace `user-grafana`
+  - ClusterRole `grafana-proxy`
+  - ClusterRoleBinding `cluster-monitoring-view-user-grafana`
+  - ClusterRoleBinding `auth-delegator-user-grafana`
+  - RoleBinding `grafana-proxy`
+
+- **Phase 2 - Grafana Instance** (5 resources):
+  - ConfigMap `ocp-injected-certs`
+  - Secret `grafana-proxy` (session secret)
+  - Grafana `grafana`
+  - GrafanaDatasource `prometheus-grafanadatasource`
+  - GrafanaFolder `rhoai-single-model-serving-dashboards`
+
+- **Phase 3 - Dashboards** (7 resources):
+  - Secret `grafana-auth-secret`
+  - 6 GrafanaDashboards (vLLM, OVMS, GPU metrics)
 
 ## Access Grafana
 
@@ -73,42 +88,22 @@ The phased approach prevents race conditions:
 - Service account must exist before auth secret
 - Wait steps ensure proper resource ordering
 
-## Detailed Phase Information
+## Repository Structure
 
-### Infrastructure & RBAC
+```
+rhoai-uwm-grafana-kustomize/
+├── change-namespace.sh           # Cross-platform namespace customization script
+└── overlays/
+    └── rhoai-uwm-user-grafana-app/
+        ├── infrastructure-rbac/  # Phase 1: references common/base/rbac
+        ├── grafana-instance/     # Phase 2: references common/base/core
+        └── dashboards/           # Phase 3: references common/base/auth + dashboards
 
-**What it deploys**:
-- Namespace `user-grafana`
-- OperatorGroup (tells cluster-wide Grafana operator to manage this namespace)
-- RBAC (ClusterRole, RoleBinding, ClusterRoleBinding)
-
-**Wait for CRDs** (from cluster-wide Grafana Operator):
-```bash
-oc get crd | grep grafana.integreatly.org
-# Should see: grafanas, grafanadatasources, grafanadashboards, grafanafolders
+common/base/                      # Shared base resources
+├── rbac/                         # Namespace, RBAC resources
+├── core/                         # Grafana instance, datasource, folder
+├── auth/                         # Auth secret
+└── dashboards/                   # Dashboard definitions
 ```
 
-### Grafana Instance
-
-**What it deploys**:
-- Grafana instance (CR)
-- Grafana datasource
-- Grafana folder
-- ConfigMap and secrets
-
-**Wait for service account**:
-```bash
-oc get serviceaccount grafana-sa -n user-grafana
-```
-
-### Dashboards
-
-**What it deploys**:
-- `grafana-auth-secret` (service account token)
-- 6 dashboards: vllm, ovms, ovms-community, nvidia-gpu-vllm-metrics, amd-gpu-vllm-metrics, gaudi-gpu-vllm-metrics
-
-**Wait for secret token**:
-```bash
-oc get secret grafana-auth-secret -n user-grafana -o jsonpath='{.data.token}' | base64 -d | wc -c
-# Should be > 100 characters
-```
+**Note:** Base resources are shared with the GitOps implementation in `common/base/` to eliminate duplication and improve maintainability.

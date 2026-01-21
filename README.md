@@ -16,11 +16,28 @@ Enable RHOAI User Workload Metrics for Single Serving Models
 * [Install the RHOAI Metrics Grafana and Dashboards for Single Serving Models with Kustomize](./rhoai-uwm-grafana-kustomize/README.md)
 * [Install the RHOAI Metrics Grafana and Dashboards for Single Serving Models with GitOps](./rhoai-uwm-grafana-gitops/README.md)
 
+## Repository Structure
+
+This repository contains two deployment methods that share common base resources:
+
+```
+rhoai-uwm/
+├── common/base/                 # Shared base resources
+│   ├── rbac/                    # Phase 1: Namespace, RBAC
+│   ├── core/                    # Phase 2: Grafana instance, datasource, folder
+│   ├── auth/                    # Phase 3: Auth secret
+│   └── dashboards/              # Phase 3: Dashboard definitions
+├── rhoai-uwm-grafana-gitops/    # ArgoCD GitOps deployment
+└── rhoai-uwm-grafana-kustomize/ # Manual Kustomize deployment (3-phase)
+```
+
+Both implementations reference the `common/base/` resources to eliminate duplication and ensure consistency.
+
 ## Usage
 
 Grab the Grafana route and open it in a browser:
 
-```md
+```bash
 NS="user-grafana"
 GRAFANA_URL=$(oc get route -n $NS grafana-route -o jsonpath='{.spec.host}')
 echo $GRAFANA_URL

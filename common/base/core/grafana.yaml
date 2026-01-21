@@ -1,9 +1,6 @@
 apiVersion: grafana.integreatly.org/v1beta1
 kind: Grafana
 metadata:
-  annotations:
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/sync-wave: "1"
   name: grafana
   labels:
     dashboards: "grafana"
@@ -56,12 +53,18 @@ spec:
                 - "-openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
                 - "-openshift-ca=/etc/proxy/certs/ca-bundle.crt"
                 - "-skip-auth-regex=^/metrics"
-              image: "quay.io/openshift/origin-oauth-proxy"
+              image: "quay.io/openshift/origin-oauth-proxy:v4.14"
               name: grafana-proxy
               ports:
                 - containerPort: 9091
                   name: https
-              resources: {}
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 128Mi
+                limits:
+                  cpu: 500m
+                  memory: 256Mi
               volumeMounts:
                 - mountPath: /etc/tls/private
                   name: grafana-tls

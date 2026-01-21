@@ -9,34 +9,36 @@ if [ -z "$1" ]; then
 fi
 
 NEW_NAMESPACE="$1"
-OVERLAY_DIR="overlays/rhoai-uwm-user-grafana-app"
-GRAFANA_APP_DIR="overlays/grafana-uwm-user-app"
+OVERLAY_DIR="overlays"
+COMMON_DIR="../common"
+
+# Determine sed command based on OS
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    SED_IN_PLACE="sed -i ''"
+else
+    SED_IN_PLACE="sed -i"
+fi
 
 echo "Changing namespace from 'user-grafana' to '$NEW_NAMESPACE'..."
 
 # Replace in application.yaml
-sed -i '' "s/namespace: user-grafana/namespace: $NEW_NAMESPACE/g" application.yaml
+$SED_IN_PLACE "s/namespace: user-grafana/namespace: $NEW_NAMESPACE/g" application.yaml
 
-# Replace in all YAML files in the main overlay directory
-find "$OVERLAY_DIR" -type f -name "*.yaml" -exec sed -i '' "s/user-grafana/$NEW_NAMESPACE/g" {} \;
+# Replace in all YAML files in the overlay directories
+find "$OVERLAY_DIR" -type f -name "*.yaml" -exec $SED_IN_PLACE "s/user-grafana/$NEW_NAMESPACE/g" {} \;
 
-# Replace in grafana-uwm-user-app overlay directory
-find "$GRAFANA_APP_DIR" -type f -name "*.yaml" -exec sed -i '' "s/user-grafana/$NEW_NAMESPACE/g" {} \;
+# Replace in common base files
+find "$COMMON_DIR" -type f -name "*.yaml" -exec $SED_IN_PLACE "s/user-grafana/$NEW_NAMESPACE/g" {} \;
 
 # Replace in README.md files
-find . -name "README.md" -type f -exec sed -i '' "s/user-grafana/$NEW_NAMESPACE/g" {} \;
+find . -name "README.md" -type f -exec $SED_IN_PLACE "s/user-grafana/$NEW_NAMESPACE/g" {} \;
 
-echo "✓ Done! Namespace changed to '$NEW_NAMESPACE'"
+echo "Done! Namespace changed to '$NEW_NAMESPACE'"
 echo ""
 echo "Files modified:"
 echo "  - application.yaml"
-echo "  - $OVERLAY_DIR/namespace.yaml"
-echo "  - $OVERLAY_DIR/kustomization.yaml"
-echo "  - $OVERLAY_DIR/operator-group.yaml"
-echo "  - $GRAFANA_APP_DIR/kustomization.yaml"
-echo "  - $GRAFANA_APP_DIR/auth-delegator-binding.yaml"
-echo "  - All other YAML files in overlay directories"
+echo "  - All YAML files in $OVERLAY_DIR/"
+echo "  - All YAML files in $COMMON_DIR/"
 echo "  - README.md files"
 echo ""
 echo "Review changes with: git diff"
-

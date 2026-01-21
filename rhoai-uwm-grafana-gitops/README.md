@@ -23,12 +23,13 @@ This repository contains Kustomize overlays for deploying Grafana for RHOAI User
 
 This script will automatically update all namespace references in:
 - ArgoCD Application manifest (`application.yaml`)
-- Infrastructure & RBAC configurations
-- Grafana instance configurations
-- Dashboard configurations
+- Common base configurations
+- Overlay configurations
 - README.md documentation
 
 **Note:** The default namespace is `user-grafana`. If you want to use a different namespace, run the script before proceeding with deployment.
+
+**Note:** The script is cross-platform compatible (works on both macOS and Linux).
 
 ## Quick Start
 
@@ -60,18 +61,15 @@ oc get route grafana-route -n user-grafana
 
 ## What Gets Deployed
 
+All 17 resources in a single ArgoCD sync:
 - **Namespace**: `user-grafana`
-- **OperatorGroup**: Allows cluster-wide Grafana operator to manage the namespace
-- **Grafana Instance**: Grafana deployment with OAuth proxy
-- **Grafana Datasource**: Prometheus datasource configured for User Workload Monitoring
-- **Grafana Folder**: "RHOAI Single Model Serving Dashboards" folder
-- **6 Dashboards**:
-  - vLLM Dashboard
-  - OVMS Dashboard
-  - OpenVINO Model Server - Model Metrics - github
-  - vLLM / GPU Metrics - NVIDIA
-  - vLLM / GPU Metrics - AMD
-  - vLLM / GPU Metrics - Intel Gaudi
+- **RBAC**: ClusterRole, 2 ClusterRoleBindings, RoleBinding
+- **Grafana Instance**: Grafana CR with OAuth proxy (resource limits, pinned image)
+- **Grafana Datasource**: Prometheus datasource for User Workload Monitoring
+- **Grafana Folder**: "RHOAI Single Model Serving Dashboards"
+- **Secrets**: Session secret, Auth secret
+- **ConfigMap**: CA bundle injection
+- **6 Dashboards**: vLLM, OVMS, GPU metrics
 
 ## Configuration
 
@@ -86,23 +84,27 @@ The application is configured to:
 ```
 rhoai-uwm-grafana-gitops/
 ├── application.yaml              # ArgoCD Application manifest
-├── base/                         # Base Kustomize resources
-│   └── instance/                 # Grafana instance configuration
+├── change-namespace.sh           # Cross-platform namespace customization script
 └── overlays/
-    └── rhoai-uwm-user-grafana-app/  # Main overlay with all resources
-        ├── namespace.yaml
-        ├── operator-group.yaml
-        ├── grafana-folder.yaml
-        └── *-dashboard.yaml      # Dashboard definitions
+    ├── grafana-uwm-user-app/     # Base overlay (rbac + core + auth)
+    └── rhoai-uwm-user-grafana-app/  # Main overlay (adds dashboards)
+
+common/base/                      # Shared base resources
+├── rbac/                         # Namespace, RBAC resources
+├── core/                         # Grafana instance, datasource, folder
+├── auth/                         # Auth secret
+└── dashboards/                   # Dashboard definitions
 ```
 
 ## Customization
 
 To customize the deployment:
 
-1. Modify the Kustomize overlays in `overlays/rhoai-uwm-user-grafana-app/`
+1. Modify the Kustomize overlays in `overlays/`
 2. Commit and push changes to your Git repository
 3. ArgoCD will automatically sync the changes
+
+**Note:** Base resources are shared with the Kustomize implementation in `common/base/`. ArgoCD-specific annotations are added via patches in the overlays to keep the base portable.
 
 ## Troubleshooting
 
@@ -130,7 +132,7 @@ oc get grafanadashboard <dashboard-name> -n user-grafana -o yaml
 
 ### Grafana Operator Not Found
 
-Ensure the Grafana operator is installed cluster-wide. The OperatorGroup in this deployment tells the operator to manage the `user-grafana` namespace, but the operator itself must be installed separately.
+Ensure the Grafana operator is installed cluster-wide. The operator must be installed separately.
 
 ## Cleanup
 

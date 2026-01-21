@@ -4,11 +4,7 @@ kind: Kustomization
 namespace: user-grafana
 
 resources:
-  - namespace.yaml
-  - operator-group.yaml
-  - grafana-proxy-rbac.yaml
-  - cluster-monitor-view-rb.yaml
-  - auth-delegator-binding.yaml
+  - ../../../../common/base/rbac
 
 patches:
   - patch: |-
@@ -30,4 +26,3 @@ patches:
       group: rbac.authorization.k8s.io
       kind: RoleBinding
       name: grafana-proxy
-

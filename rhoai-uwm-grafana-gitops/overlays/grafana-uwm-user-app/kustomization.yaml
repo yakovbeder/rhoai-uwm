@@ -8,13 +8,30 @@ commonAnnotations:
   argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 
 resources:
-  - ../../base/instance
-  - grafana-ds.yaml
-  - cluster-monitor-view-rb.yaml
-  - auth-delegator-binding.yaml
-  - grafana-auth-secret.yaml
+  - ../../../common/base/rbac
+  - ../../../common/base/core
+  - ../../../common/base/auth
 
 patches:
+  # Add ArgoCD sync wave to Grafana instance
+  - patch: |-
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+        value: "1"
+    target:
+      group: grafana.integreatly.org
+      version: v1beta1
+      kind: Grafana
+      name: grafana
+  # Add ArgoCD sync wave to GrafanaDatasource
+  - patch: |-
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1sync-wave
+        value: "1"
+    target:
+      kind: GrafanaDatasource
+      name: prometheus-grafanadatasource
+  # Patch datasource to reference auth secret
   - patch: |-
       - op: add
         path: /spec/valuesFrom
@@ -27,4 +44,3 @@ patches:
     target:
       kind: GrafanaDatasource
       name: prometheus-grafanadatasource
-

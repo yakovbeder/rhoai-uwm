@@ -3,7 +3,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - session-secret.yaml
-  - injected-certs-cm.yaml
+  - namespace.yaml
   - grafana-proxy-rbac.yaml
-  - grafana.yaml
+  - cluster-monitor-view-rb.yaml
+  - auth-delegator-binding.yaml
