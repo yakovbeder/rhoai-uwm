@@ -1,6 +1,6 @@
 # RHOAI Metrics Dashboard for Single Serving Models
 
-Enable RHOAI User Workload Metrics for Single Serving Models
+Enable RHOAI User Workload Metrics for Single Serving Models.
 
 ## Prerequisites
 
@@ -29,10 +29,57 @@ rhoai-uwm/
 │   ├── core/                    # Phase 2: Grafana instance, datasource, folder
 │   ├── auth/                    # Phase 3: Auth secret
 │   └── dashboards/              # Phase 3: Dashboard definitions
-└── rhoai-uwm-grafana-kustomize/ # Manual Kustomize deployment (3-phase)
+└── rhoai-uwm-grafana-kustomize/ # Kustomize deployment (3-phase)
 ```
 
 The deployment references the `common/base/` resources to eliminate duplication and ensure consistency.
+
+## Dashboards
+
+### vLLM Inference Metrics
+
+The **vLLM** dashboard is the single source of truth for all vLLM model-serving metrics. It provides comprehensive monitoring with namespace and model auto-detection, including:
+- Token throughput (generation and prompt)
+- Request latency (E2E, TTFT, TPOT)
+- Scheduler state (running, waiting, swapped)
+- KV cache utilization
+- Prefill and decode phase timing
+- Preemption rate and prefix cache hit rate
+
+### GPU Hardware Metrics
+
+GPU-specific dashboards focus purely on hardware metrics (no model-serving metrics):
+
+- **GPU Metrics - NVIDIA**: Temperature, SM clocks, power, utilization, VRAM, memory copy utilization, tensor core utilization (via DCGM)
+- **GPU Metrics - AMD**: Temperature, clocks, power, utilization, VRAM usage (via ROCm SMI)
+- **GPU Metrics - Intel Gaudi**: Temperature, SoC clocks, power, utilization, HBM usage (via Habanalabs)
+
+### OpenVINO Model Server (OVMS)
+
+- **OVMS**: Request time, inference execution time, success/failure rates, throughput, latency quantiles, queue wait time
+- **OpenVINO Model Server - Model Metrics**: Per-model throughput, latency distribution, Apdex score, inference time, queue wait time, failure rate, error ratio
+
+## Screenshots
+
+- **vLLM Dashboard** — Token throughput, E2E latency, scheduler state:
+
+![vLLM Dashboard 1](./assets/dashboard1.png)
+
+- **vLLM Dashboard** — Prompt/generation heatmaps, cache utilization, TPOT, TTFT:
+
+![vLLM Dashboard 2](./assets/dashboard2.png)
+
+- **OVMS Dashboard** — Request time, inference time, success/failure rates:
+
+![OVMS Dashboard](./assets/dashboard3.png)
+
+- **OpenVINO Model Server - Model Metrics** — Per-model throughput, latency, Apdex score:
+
+![OVMS Community Dashboard](./assets/dashboard4.png)
+
+- **GPU Metrics - NVIDIA** — Temperature, clocks, power, utilization:
+
+![NVIDIA GPU Dashboard](./assets/dashboard5.png)
 
 ## Usage
 
@@ -43,25 +90,3 @@ NS="user-grafana"
 GRAFANA_URL=$(oc get route -n $NS grafana-route -o jsonpath='{.spec.host}')
 echo $GRAFANA_URL
 ```
-
-- **vLLM Model Metrics Dashboard**: Provides Model metrics for vLLM Single Serving Models dashboard.
-
-![vLLM Dashboard 1](./assets/dashboard1.png)
-
-- **vLLM Service Performance Dashboard**: Provides Service Performance metrics for vLLM Single Serving Models dashboard.
-
-![vLLM Dashboard 2](./assets/dashboard2.png)
-
-- **OpenVINO Service Model Metrics Dashboard**: Provides metrics for OpenVINO Single Serving Models
-
-![OpenVINO Dashboard 4](./assets/dashboard4.png)
-
-- **OpenVINO Model Metrics Dashboard**: Provides Service Performance metrics for OpenVINO Single Serving Models.
-
-![OpenVINO Dashboard 3](./assets/dashboard3.png)
-
-- **GPU / vLLM Dashboard**: Provides GPU and vLLM performance metrics for Single Serving Models.
-
-![GPU Dashboard 5](./assets/dashboard5.png)
-
-![vLLM Dashboard 6](./assets/dashboard6.png)

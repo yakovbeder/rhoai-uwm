@@ -105,4 +105,4 @@ common/base/                      # Shared base resources
 └── dashboards/                   # Dashboard definitions
 ```
 
-**Note:** Base resources are shared with the GitOps implementation in `common/base/` to eliminate duplication and improve maintainability.
+**Note:** Base resources are defined in `common/base/` to eliminate duplication and improve maintainability.
