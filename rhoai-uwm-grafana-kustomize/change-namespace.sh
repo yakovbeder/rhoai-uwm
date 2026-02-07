@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Script to change namespace from 'user-grafana' to a new namespace
-# This script only modifies overlay files, not the shared base resources.
+# Changes the Kustomize namespace across overlay files and README.
+# Only modifies overlays and README — shared base resources are not touched.
 
-# Check if namespace argument is provided
 if [ -z "${1:-}" ]; then
   echo "Usage: $0 <new-namespace>"
   echo "Example: $0 yakov"
   exit 1
 fi
 
-readonly NEW_NAMESPACE="${1}"
-readonly OVERLAY_DIR="overlays"
+readonly NEW_NS="${1}"
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Cross-platform sed in-place function
+cd "${SCRIPT_DIR}"
+
 sed_in_place() {
   if [[ "${OSTYPE:-}" == "darwin"* ]]; then
     sed -i '' "$@"
@@ -23,25 +23,31 @@ sed_in_place() {
   fi
 }
 
-echo "Changing namespace from 'user-grafana' to '${NEW_NAMESPACE}'..."
+CURRENT_NS=$(grep -m1 '^namespace:' overlays/rhoai-uwm-user-grafana-app/infrastructure-rbac/kustomization.yaml | awk '{print $2}')
 
-# Replace in all YAML files in the overlay directory
-if [ -d "${OVERLAY_DIR}" ]; then
-  find "${OVERLAY_DIR}" -type f -name "*.yaml" -exec sed_in_place "s/user-grafana/${NEW_NAMESPACE}/g" {} \;
+if [ -z "${CURRENT_NS}" ]; then
+  echo "Error: could not detect current namespace from overlay kustomization.yaml"
+  exit 1
 fi
 
-# Replace in README.md
+if [ "${CURRENT_NS}" = "${NEW_NS}" ]; then
+  echo "Namespace is already '${NEW_NS}'. Nothing to do."
+  exit 0
+fi
+
+echo "Changing namespace: '${CURRENT_NS}' -> '${NEW_NS}'..."
+
+while IFS= read -r -d '' file; do
+  sed_in_place "s/${CURRENT_NS}/${NEW_NS}/g" "${file}"
+done < <(find overlays -type f -name "*.yaml" -print0)
+
 if [ -f "README.md" ]; then
-  sed_in_place "s/user-grafana/${NEW_NAMESPACE}/g" README.md
+  sed_in_place \
+    -e "s/\`${CURRENT_NS}\`/\`${NEW_NS}\`/g" \
+    -e "s/-n ${CURRENT_NS}/-n ${NEW_NS}/g" \
+    -e "s/cluster-monitoring-view-${CURRENT_NS}/cluster-monitoring-view-${NEW_NS}/g" \
+    -e "s/auth-delegator-${CURRENT_NS}/auth-delegator-${NEW_NS}/g" \
+    README.md
 fi
 
-echo "Done! Namespace changed to '${NEW_NAMESPACE}'"
-echo ""
-echo "Files modified:"
-echo "  - All YAML files in ${OVERLAY_DIR}/"
-echo "  - README.md"
-echo ""
-echo "Note: Shared base resources in ../common/ are NOT modified."
-echo "      Namespace transformation is handled by Kustomize overlays."
-echo ""
-echo "Review changes with: git diff"
+echo "Done. Review changes with: git diff"

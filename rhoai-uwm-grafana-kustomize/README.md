@@ -21,7 +21,6 @@ This repository contains Kustomize overlays for deploying Grafana for RHOAI User
 ```
 
 This script will automatically update all namespace references in:
-- Common base configurations
 - Overlay configurations
 - README.md documentation
 
