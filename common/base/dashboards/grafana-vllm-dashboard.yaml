@@ -4,9 +4,6 @@ metadata:
   name: vllm-dashboard
   labels:
     dashboards: grafana
-  annotations:
-    argocd.argoproj.io/compare-options: IgnoreExtraneous
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   folder: RHOAI Single Model Serving Dashboards
   instanceSelector:
@@ -1503,7 +1500,7 @@ spec:
               "type": "prometheus",
               "uid": "${DS_PROMETHEUS}"
             },
-            "definition": "label_values(model_name)",
+            "definition": "label_values(vllm:num_requests_running,model_name)",
             "hide": 0,
             "includeAll": false,
             "label": "model_name",
@@ -1511,7 +1508,7 @@ spec:
             "name": "model_name",
             "options": [],
             "query": {
-              "query": "label_values(model_name)",
+              "query": "label_values(vllm:num_requests_running,model_name)",
               "refId": "StandardVariableQuery"
             },
             "refresh": 1,

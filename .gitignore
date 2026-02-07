@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor directories and files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# Backup files created by sed -i
+*.bak
+*.orig
+*.tmp
+
+# Temporary files
+*.log
+
+# Kubernetes/OpenShift
+kubeconfig
+*.kubeconfig

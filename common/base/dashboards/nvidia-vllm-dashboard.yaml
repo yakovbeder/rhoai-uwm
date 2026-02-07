@@ -2,9 +2,6 @@ apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
   name: nvidia-gpu-vllm-metrics-dashboard
-  annotations:
-    argocd.argoproj.io/compare-options: IgnoreExtraneous
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
   instanceSelector:
     matchLabels:
@@ -1980,11 +1977,11 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "edx8memhpd9tsa"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "rate(vllm:request_queue_time_seconds_sum{model_name=\"$model_name\"}[$__rate_interval])",
+              "expr": "rate(vllm:request_queue_time_seconds_sum{namespace=\"$namespace\", model_name=\"$model_name\"}[$__rate_interval])",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "instant": false,
@@ -1994,7 +1991,7 @@ spec:
               "useBackend": false
             }
           ],
-          "title": "Requests in Queue Time - WIP",
+          "title": "Requests in Queue Time",
           "type": "timeseries"
         },
         {
@@ -2003,7 +2000,7 @@ spec:
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "Tracks the time spent in model inference, offering insights into processing efficiency.\nUsually empty, depending on the load.\n\nNot currently available in the vLLM Runtime version used by RHOAI",
+          "description": "Tracks the time spent in model inference, offering insights into processing efficiency.\nUsually empty, depending on the load.",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2083,11 +2080,11 @@ spec:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "edx8memhpd9tsa"
+                "uid": "${DS_PROMETHEUS}"
               },
               "disableTextWrap": false,
               "editorMode": "code",
-              "expr": "rate(vllm:request_inference_time_seconds{namespace=\"$namespace\", pod=~\"$model_name.*\", model_name=\"$model_name\"}[5m])",
+              "expr": "rate(vllm:request_inference_time_seconds_sum{namespace=\"$namespace\", model_name=\"$model_name\"}[$__rate_interval])",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
               "instant": false,
@@ -2097,7 +2094,7 @@ spec:
               "useBackend": false
             }
           ],
-          "title": "Inference Time - WIP",
+          "title": "Inference Time",
           "type": "timeseries"
         }
       ],
@@ -2169,33 +2166,34 @@ spec:
             "type": "query"
           },
           {
-            "current": {
-              "text": "${NAMESPACE}",
-              "value": "${NAMESPACE}"
-            },
-            "description": "",
-            "hide": 1,
+            "current": {},
+            "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"},
+            "definition": "label_values(vllm:num_requests_running,namespace)",
+            "includeAll": false,
+            "label": "namespace",
+            "multi": false,
             "name": "namespace",
-            "options": [
-              {
-                "selected": true,
-                "text": "${NAMESPACE}",
-                "value": "${NAMESPACE}"
-              }
-            ],
-            "query": "${NAMESPACE}",
-            "type": "textbox"
+            "options": [],
+            "query": "label_values(vllm:num_requests_running,namespace)",
+            "refresh": 1,
+            "regex": "",
+            "sort": 1,
+            "type": "query"
           },
           {
-            "current": {
-              "text": "${MODEL_NAME}",
-              "value": "${MODEL_NAME}"
-            },
-            "hide": 2,
+            "current": {},
+            "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"},
+            "definition": "label_values(vllm:num_requests_running{namespace=~\"$namespace\"},model_name)",
+            "includeAll": false,
+            "label": "model_name",
+            "multi": false,
             "name": "model_name",
-            "query": "${MODEL_NAME}",
-            "skipUrlSync": true,
-            "type": "constant"
+            "options": [],
+            "query": "label_values(vllm:num_requests_running{namespace=~\"$namespace\"},model_name)",
+            "refresh": 1,
+            "regex": "",
+            "sort": 1,
+            "type": "query"
           }
         ]
       },

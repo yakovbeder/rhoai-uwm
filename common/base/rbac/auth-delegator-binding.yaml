@@ -8,6 +8,6 @@ roleRef:
   kind: ClusterRole
   name: system:auth-delegator
 subjects:
-- kind: ServiceAccount
-  name: grafana-sa
-  namespace: user-grafana
+  - kind: ServiceAccount
+    name: grafana-sa
+    namespace: patch-me
