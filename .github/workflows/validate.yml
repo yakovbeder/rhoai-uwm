@@ -42,7 +42,12 @@ jobs:
             # Skip if file is empty or doesn't exist
             [ -s "$file" ] || continue
             # Try to parse with Python's yaml module (basic syntax check)
-            python3 -c "import yaml; yaml.safe_load(open('$file'))" || {
+            # Use safe_load_all to support multi-document YAML files (--- separators)
+            python3 -c "
+          import yaml, sys
+          with open('$file') as f:
+              list(yaml.safe_load_all(f))
+          " || {
               echo "❌ YAML syntax error in: $file"
               exit 1
             }
