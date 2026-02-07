@@ -623,7 +623,7 @@ spec:
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "description": "If CPU throttling is low and GPU utilization is high, it indicates that the system is well-balanced, with the GPU being fully utilized without CPU constraints. \n  If CPU throttling is high and GPU utilization is low, it indicates a CPU bottleneck. The CPU is unable to keep up with the GPU's processing demands, causing the GPU to remain underutilized. If both metrics are high, it may indicate that the workload is demanding for both CPU and GPU, and you may need to scale up resources.",
+          "description": "GPU VRAM usage",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -636,7 +636,6 @@ spec:
                 "axisLabel": "",
                 "axisPlacement": "auto",
                 "barAlignment": 0,
-                "barWidthFactor": 0.6,
                 "drawStyle": "line",
                 "fillOpacity": 10,
                 "gradientMode": "none",
@@ -662,52 +661,39 @@ spec:
                   "mode": "off"
                 }
               },
-              "links": [],
               "mappings": [],
-              "max": 100,
-              "min": 0,
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "transparent",
+                    "color": "green",
                     "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
                   }
                 ]
               },
-              "unit": "percent"
+              "unit": "mbytes"
             },
             "overrides": []
           },
           "gridPos": {
-            "h": 9,
-            "w": 19,
+            "h": 8,
+            "w": 12,
             "x": 0,
             "y": 33
           },
-          "id": 108,
+          "id": 109,
           "options": {
-            "alertThreshold": true,
             "legend": {
-              "calcs": [
-                "mean",
-                "lastNotNull",
-                "max"
-              ],
-              "displayMode": "table",
+              "calcs": [],
+              "displayMode": "list",
               "placement": "bottom",
               "showLegend": true
             },
             "tooltip": {
-              "mode": "multi",
-              "sort": "desc"
+              "mode": "single",
+              "sort": "none"
             }
           },
-          "pluginVersion": "11.3.0",
           "targets": [
             {
               "datasource": {
@@ -715,50 +701,98 @@ spec:
                 "uid": "${DS_PROMETHEUS}"
               },
               "editorMode": "code",
-              "expr": "sum(rate(container_cpu_cfs_throttled_seconds_total{namespace=\"$namespace\", pod=~\"$model_name.*\"}[5m])) by (namespace)",
-              "format": "time_series",
-              "interval": "",
-              "intervalFactor": 1,
-              "legendFormat": "CPU {{cpu}}",
-              "range": true,
-              "refId": "D"
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${DS_PROMETHEUS}"
-              },
-              "editorMode": "code",
-              "expr": "avg(gpu_gfx_activity{instance=~\"$instance\", gpu=~\"$gpu\"})",
-              "hide": false,
+              "expr": "gpu_vram_used{instance=~\"$instance\", gpu=~\"$gpu\"}",
               "instant": false,
-              "legendFormat": "GPU {{gpu}}",
+              "legendFormat": "__auto",
               "range": true,
               "refId": "A"
             }
           ],
-          "title": "CPU-GPU Bottleneck",
+          "title": "GPU VRAM Usage",
           "type": "timeseries"
-        },
-        {
-          "collapsed": false,
-          "gridPos": {
-            "h": 1,
-            "w": 24,
-            "x": 0,
-            "y": 42
+        }
+      ],
+      "preload": false,
+      "refresh": false,
+      "schemaVersion": 40,
+      "tags": [],
+      "templating": {
+        "list": [
+          {
+            "current": {
+              "selected": false,
+              "text": "Prometheus",
+              "value": "${DS_PROMETHEUS}"
+            },
+            "hide": 0,
+            "includeAll": false,
+            "label": "datasource",
+            "multi": false,
+            "name": "DS_PROMETHEUS",
+            "options": [],
+            "query": "prometheus",
+            "queryValue": "",
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "type": "datasource"
           },
-          "id": 30,
-          "panels": [],
-          "title": "vLLM Metrics",
-          "type": "row"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+          {
+            "current": {
+              "text": [
+                "All"
+              ],
+              "value": [
+                "$__all"
+              ]
+            },
+            "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"},
+            "definition": "label_values(gpu_junction_temperature,instance)",
+            "includeAll": true,
+            "multi": true,
+            "name": "instance",
+            "options": [],
+            "query": "label_values(gpu_junction_temperature,instance)",
+            "refresh": 1,
+            "regex": "",
+            "sort": 1,
+            "type": "query"
           },
-          "description": "Tracks the percentage of GPU memory used by the vLLM model, providing insights into memory efficiency",
+          {
+            "current": {
+              "text": [
+                "All"
+              ],
+              "value": [
+                "$__all"
+              ]
+            },
+            "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"},
+            "definition": "label_values(gpu_junction_temperature,gpu)",
+            "includeAll": true,
+            "multi": true,
+            "name": "gpu",
+            "options": [],
+            "query": "label_values(gpu_junction_temperature,gpu)",
+            "refresh": 1,
+            "regex": "",
+            "sort": 1,
+            "type": "query"
+          }
+        ]
+      },
+      "time": {
+        "from": "now-5m",
+        "to": "now"
+      },
+      "timepicker": {},
+      "timezone": "",
+      "title": "GPU Metrics - AMD",
+      "uid": "amd-gpu-vllm-metrics",
+      "version": 1,
+      "weekStart": ""
+    }
+  }
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -2171,36 +2205,6 @@ spec:
             "sort": 1,
             "type": "query"
           },
-          {
-            "current": {},
-            "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"},
-            "definition": "label_values(vllm:num_requests_running,namespace)",
-            "includeAll": false,
-            "label": "namespace",
-            "multi": false,
-            "name": "namespace",
-            "options": [],
-            "query": "label_values(vllm:num_requests_running,namespace)",
-            "refresh": 1,
-            "regex": "",
-            "sort": 1,
-            "type": "query"
-          },
-          {
-            "current": {},
-            "datasource": {"type": "prometheus", "uid": "${DS_PROMETHEUS}"},
-            "definition": "label_values(vllm:num_requests_running{namespace=~\"$namespace\"},model_name)",
-            "includeAll": false,
-            "label": "model_name",
-            "multi": false,
-            "name": "model_name",
-            "options": [],
-            "query": "label_values(vllm:num_requests_running{namespace=~\"$namespace\"},model_name)",
-            "refresh": 1,
-            "regex": "",
-            "sort": 1,
-            "type": "query"
-          }
         ]
       },
       "time": {
@@ -2209,7 +2213,7 @@ spec:
       },
       "timepicker": {},
       "timezone": "",
-      "title": "vLLM / GPU Metrics - AMD",
+      "title": "GPU Metrics - AMD",
       "uid": "amd-gpu-vllm-metrics",
       "version": 1,
       "weekStart": ""
