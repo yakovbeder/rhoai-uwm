@@ -59,6 +59,16 @@ GPU-specific dashboards focus purely on hardware metrics (no model-serving metri
 - **OVMS**: Request time, inference execution time, success/failure rates, throughput, latency quantiles, queue wait time
 - **OpenVINO Model Server - Model Metrics**: Per-model throughput, latency distribution, Apdex score, inference time, queue wait time, failure rate, error ratio
 
+## Usage
+
+Grab the Grafana route and open it in a browser:
+
+```bash
+NS="user-grafana"
+GRAFANA_URL=$(oc get route -n $NS grafana-route -o jsonpath='{.spec.host}')
+echo $GRAFANA_URL
+```
+
 ## Screenshots
 
 - **vLLM Dashboard** — Token throughput, E2E latency, scheduler state:
@@ -80,13 +90,3 @@ GPU-specific dashboards focus purely on hardware metrics (no model-serving metri
 - **GPU Metrics - NVIDIA** — Temperature, clocks, power, utilization:
 
 ![NVIDIA GPU Dashboard](./assets/dashboard5.png)
-
-## Usage
-
-Grab the Grafana route and open it in a browser:
-
-```bash
-NS="user-grafana"
-GRAFANA_URL=$(oc get route -n $NS grafana-route -o jsonpath='{.spec.host}')
-echo $GRAFANA_URL
-```
